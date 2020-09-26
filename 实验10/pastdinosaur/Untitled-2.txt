@@ -1,0 +1,36 @@
+
+always @(posedge clk)
+begin
+    if(rst) 
+        R_rom_addr  <=  12'd0 ;
+    else if(W_active_flag)     
+        begin
+            if(h_cnt >= (C_H_SYNC_PULSE + C_H_BACK_PORCH                        )  && 
+               h_cnt <= (C_H_SYNC_PULSE + C_H_BACK_PORCH + C_IMAGE_WIDTH  - 1'b1)  &&
+               v_cnt >= (C_V_SYNC_PULSE + C_V_BACK_PORCH                        )  && 
+               v_cnt <= (C_V_SYNC_PULSE + C_V_BACK_PORCH + C_IMAGE_HEIGHT - 1'b1)  )
+                begin
+                    vga_r   <= W_rom_data[11:8]    ; // 红色分量
+                    vga_g   <= W_rom_data[7:4]     ; // 绿色分量
+                    vga_b   <= W_rom_data[3:0]      ; // 蓝色分量
+                    if(R_rom_addr == C_IMAGE_PIX_NUM - 1'b1)
+                        R_rom_addr  <=  12'd0 ;
+                    else
+                        R_rom_addr  <=  R_rom_addr  +  1'b1 ;        
+                end
+            else
+                begin
+                    vga_r       <=  4'b1111        ;
+                    vga_g       <=  4'b1111        ;
+                    vga_b       <=  4'b1111        ;
+                    R_rom_addr  <=  R_rom_addr  ;
+                end                          
+        end
+    else
+        begin
+            vga_r       <=  4'b1111       ;
+            vga_g       <=  4'b1111        ;
+            vga_b       <=  4'b1111        ;
+            R_rom_addr  <=  R_rom_addr  ;
+        end  
+end

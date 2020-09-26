@@ -1,0 +1,7 @@
+# well
+*.xdc
+/tutorial
+/logisim和其他
+wyc/*
+wyc\*
+/实验10/wyc/*
